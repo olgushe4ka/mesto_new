@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import Card from "../models/card";
+import User from "../models/user";
+import { RequestCustom } from "types";
 
 
 // GET /users — возвращает всех пользователей
@@ -47,8 +49,14 @@ export const getCardById = async (req: Request, res: Response) => {
 // В теле POST-запроса на создание пользователя передайте JSON-объект с тремя полями: name, about и avatar.
 
 
-export const createCard = async (req: Request, res: Response) => {
+export const createCard = async (req:RequestCustom, res: Response) => {
   try {
+console.log(req.body)
+//console.log(req.user);
+console.log(req.user?._id);
+
+const owner = await User.findById(req.user?._id);
+
     const { name, link } = req.body;
     if (!name || !link )  {
       const error = new Error("Переданы не все обязательны поля");
@@ -56,8 +64,10 @@ export const createCard = async (req: Request, res: Response) => {
       throw error;
     }
 
-    const newUser = await Card.create(req.body);
-    return res.status(201).send(newUser);
+    const newCard = {name, link, owner}
+
+    const newCardCreate = await Card.create(newCard);
+    return res.status(201).send(newCardCreate);
   } catch (error) {
     console.log(`Ошибка ${error}`)
     if (error instanceof Error && error.name === "CustomValid") {

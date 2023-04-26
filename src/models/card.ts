@@ -21,14 +21,15 @@ const cardSchema = new mongoose.Schema<ICard>({
     required: true,
   },
   owner: {
-    type: ObjectId,
+   type: ObjectId,
+    //type: String,
     required: true,
   },
-  likes: {
+  likes: [{
     type: ObjectId,
     'default': [],
     required: true,
-  },
+  }],
   createdAt: {
     type: Date,
     'default': Date.now,
