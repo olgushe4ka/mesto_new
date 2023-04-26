@@ -1,8 +1,7 @@
-
-import express, { NextFunction, Request, Response, json } from 'express';
-import mongoose from 'mongoose';
-import router from './routes/index';
-import { RequestCustom } from 'types';
+import express, { NextFunction, Request, Response, json } from "express";
+import mongoose from "mongoose";
+import router from "./routes/index";
+import { RequestCustom } from "types";
 
 const app = express();
 app.use(json());
@@ -35,4 +34,3 @@ async function connect() {
 }
 
 connect();
-

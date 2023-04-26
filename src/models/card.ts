@@ -2,7 +2,6 @@ import { ObjectId } from "mongodb";
 import mongoose, { Date } from "mongoose";
 import { ICard } from "types";
 
-
 // name — имя карточки, строка от 2 до 30 символов, обязательное поле;
 // link — ссылка на картинку, строка, обязательно поле.
 // owner — ссылка на модель автора карточки, тип ObjectId, обязательное поле;
@@ -21,18 +20,20 @@ const cardSchema = new mongoose.Schema<ICard>({
     required: true,
   },
   owner: {
-   type: ObjectId,
+    type: ObjectId,
     //type: String,
     required: true,
   },
-  likes: [{
-    type: ObjectId,
-    'default': [],
-    required: true,
-  }],
+  likes: [
+    {
+      type: ObjectId,
+      default: [],
+      required: true,
+    },
+  ],
   createdAt: {
     type: Date,
-    'default': Date.now,
+    default: Date.now,
     required: true,
   },
 });

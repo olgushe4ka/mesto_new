@@ -14,7 +14,6 @@ export interface ICard {
   createdAt: Date;
 }
 
-
 export interface RequestCustom extends Request {
   user?: {
     _id: string;

@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import User from "../models/user";
-
+import { RequestCustom } from "types";
 
 // GET /users — возвращает всех пользователей
 // GET /users/:userId - возвращает пользователя по _id
-
-
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -42,18 +40,14 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-
 // POST /users — создаёт пользователя
 // В теле POST-запроса на создание пользователя передайте JSON-объект с тремя полями: name, about и avatar.
 
-
 export const createUser = async (req: Request, res: Response) => {
   try {
-
-console.log(req.body);
     const { name, about, avatar } = req.body;
-    if (!name || !about || !avatar)  {
-      const error = new Error("Переданы не все обязательны поля");
+    if (!name || !about || !avatar) {
+      const error = new Error("Переданы не все обязательные поля");
       error.name = "CustomValid";
       throw error;
     }
@@ -61,7 +55,6 @@ console.log(req.body);
     const newUser = await User.create(req.body);
     return res.status(201).send(newUser);
   } catch (error) {
-    console.log(`Ошибка ${error}`)
     if (error instanceof Error && error.name === "CustomValid") {
       return res.status(400).send({ message: error.message });
     }
@@ -74,15 +67,67 @@ console.log(req.body);
   }
 };
 
-export const updateAvatar = async (req: Request, res: Response) => {
-  try{console.log(req.body);}
-  catch (error) { console.log(`Ошибка ${error}`)}
-}
+export const updateAvatar = async (req: RequestCustom, res: Response) => {
+  try {
+    await User.findByIdAndUpdate(req.user?._id, req.body, { new: true }).then(
+      (user) => {
+        if (!user) {
+          const error = new Error("Нет user с таким id");
+          error.name = "CustomValid";
+          throw error;
+        }
+        const { avatar } = req.body;
+        if (!avatar) {
+          const error = new Error("Переданы не все обязательные данные");
+          error.name = "CustomValid";
+          throw error;
+        }
 
-export const updateProfile = async (req: Request, res: Response) => {
-  try{console.log(req.body);}
-  catch (error) { console.log(`Ошибка ${error}`)}
-}
+        return res.status(201).send(user);
+      }
+    );
+  } catch (error) {
+    if (error instanceof Error && error.name === "CustomValid") {
+      return res.status(400).send({ message: error.message });
+    }
 
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send({ message: error.message });
+    }
+
+    return res.status(500).send({ message: "Ошибка на стороне сервера" });
+  }
+};
+
+export const updateProfile = async (req: RequestCustom, res: Response) => {
+  try {
+    await User.findByIdAndUpdate(req.user?._id, req.body, { new: true }).then(
+      (user) => {
+        if (!user) {
+          const error = new Error("Нет user с таким id");
+          error.name = "CustomValid";
+          throw error;
+        }
+        const { about } = req.body;
+        if (!about) {
+          const error = new Error("Переданы не все обязательные данные");
+          error.name = "CustomValid";
+          throw error;
+        }
+        return res.status(201).send(user);
+      }
+    );
+  } catch (error) {
+    if (error instanceof Error && error.name === "CustomValid") {
+      return res.status(400).send({ message: error.message });
+    }
+
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send({ message: error.message });
+    }
+
+    return res.status(500).send({ message: "Ошибка на стороне сервера" });
+  }
+};
 
 export default {};

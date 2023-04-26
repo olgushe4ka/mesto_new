@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { createCard, getCardById, getCards, cardLike, cardLikeRemove } from "../controllers/card";
+import { createCard, deleteCardById, getCards, cardLike, cardLikeRemove } from "../controllers/card";
 
 const cardRouter = Router();
 
 cardRouter.get("/", getCards);
-cardRouter.get("/:cardId", getCardById);
+cardRouter.delete("/:cardId", deleteCardById);
 cardRouter.post("/", createCard);
 cardRouter.put("/:cardId/likes", cardLike);
 cardRouter.delete("/:cardId/likes", cardLikeRemove);
